@@ -451,6 +451,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 # Just wait until the user solves the captcha in the browser window
                 # 10 hours if needed :D
                 logger.info('Waiting for user to solve captcha')
+                time.sleep(10)
                 return self._wait_until_search_input_field_appears(10 * 60 * 60)
 
 
