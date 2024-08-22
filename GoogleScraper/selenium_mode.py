@@ -11,6 +11,8 @@ import random
 import re
 import sys
 import os
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 
 try:
     from selenium import webdriver
@@ -348,8 +350,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     '--proxy-server={}://{}:{}'.format(self.proxy.proto, self.proxy.host, self.proxy.port))
 
             chromedriver_path = self.config.get('chromedriver_path')
-            self.webdriver = webdriver.Chrome(executable_path=chromedriver_path,
-                                                        chrome_options=chrome_options)
+            chrome_install = ChromeDriverManager().install()
+            folder = os.path.dirname(chrome_install)
+            chromedriver_path = os.path.join(folder, "chromedriver.exe")
+            self.webdriver = webdriver.Chrome(service=Service(chromedriver_path), options=chrome_options)
             return True
 
         except WebDriverException as e:
