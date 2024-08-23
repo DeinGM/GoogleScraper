@@ -53,7 +53,10 @@ def check_detection(config, search_engine_name):
     options.add_argument('headless')
     options.add_argument('window-size=1200x600')
 
-    browser = webdriver.Chrome(chrome_options=options, executable_path=chromedriver)
+    chrome_install = ChromeDriverManager().install()
+    folder = os.path.dirname(chrome_install)
+    chromedriver_path = os.path.join(folder, "chromedriver.exe")
+    browser = webdriver.Chrome(service=Service(chromedriver_path), options=chrome_options)
 
     if search_engine_name == 'google':
         url = get_base_search_url_by_search_engine(config, 'google', 'selenium')
