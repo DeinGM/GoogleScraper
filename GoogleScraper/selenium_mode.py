@@ -586,7 +586,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 logger.warning('{}: Cannot locate next page element: {}'.format(self.name, str(e)))
                 return False
 
-            return self.webdriver.find_element_by_css_selector(selector)
+            return self.webdriver.find_element(By.CSS_SELECTOR, selector)
 
         elif self.search_type == 'image':
             self.page_down()
