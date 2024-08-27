@@ -440,6 +440,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             if self.config.get('manual_captcha_solving', False) and self.config.get('browser_mode') != 'headless':
                 with self.captcha_lock:
                     solution = input('Please solve the captcha in the browser! Enter any key when done...')
+                    if urlparse(self.webdriver.current_url).path:
+                        site_parser = urlparse(self.webdriver.current_url)
+                        self.webdriver.get(site_parser.scheme + "://" + site_parser.netloc)
                     try:
                         self.search_input = WebDriverWait(self.webdriver, 7).until(
                             EC.visibility_of_element_located(self._get_search_input_field()))
