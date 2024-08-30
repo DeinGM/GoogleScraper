@@ -131,8 +131,8 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
     malicious_request_needles = {
         'google': {
             'inurl': '/sorry/',
-            # 'inhtml': 'detected unusual traffic'
-            'inhtml': '存在异常流量'
+            'inhtml': 'detected unusual traffic',
+            'inhtmlinCN': '存在异常流量'
         },
         'bing': {},
         'yahoo': {},
