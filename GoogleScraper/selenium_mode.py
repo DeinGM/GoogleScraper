@@ -398,8 +398,12 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
                 profile.update_preferences()
 
-            self.webdriver = webdriver.Firefox(firefox_binary=binary, firefox_options=options,
-                     executable_path=geckodriver_path, firefox_profile=profile)
+            firefox_install = GeckoDriverManager().install()
+            folder = os.path.dirname(firefox_install)
+            firefox_path = os.path.join(folder, "geckodriver.exe")
+            # self.webdriver = webdriver.Firefox(firefox_binary=binary, firefox_options=options,
+            #          executable_path=geckodriver_path, firefox_profile=profile)
+            self.webdriver = webdriver.Firefox(service=Service(firefox_path), options=options)
             return True
 
         except WebDriverException as e:
