@@ -48,7 +48,7 @@ class CsvStreamWriter():
         # every row in the csv output file should contain all fields
         # that are in the table definition. Except the id, they have the
         # same name in both tables
-        self.file = open(filename, 'wt')
+        self.file = open(filename, 'wt', encoding='utf-8')
         self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
         self.dict_writer.writeheader()
 
