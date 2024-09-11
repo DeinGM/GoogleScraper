@@ -58,7 +58,7 @@ class CsvStreamWriter():
             d = row2dict(serp)
             d.update(row)
             d = ({k: v if type(v) is str else v for k, v in d.items() if k in csv_fieldnames})
-            if d['link']:
+            if d['link'] != 'None':
                 self.dict_writer.writerow(d)
 
     def end(self):
