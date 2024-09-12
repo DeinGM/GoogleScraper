@@ -368,6 +368,21 @@ class GoogleParser(Parser):
                 'title': 'h3.r > a:first-child::text',
                 'visible_link': 'cite::text'
             },
+            'cn_ip': {
+                # 于20240910添加
+                'container': '#center_col',
+                'result_container': 'div#search > div > div > div.MjjYud ',
+                'link': 'div.yuRUbf > div > span > a:first-child::attr(href)',
+                'snippet': 'div.kb0PBd > div.VwiC3b::text',
+                'title': 'span > a > div > div.q0vns > div.CA5RN > div > span.VuuXrf::text',
+                'visible_link': 'span > a > div > div.q0vns > div.CA5RN > div > cite::text',
+                # 'container': '#center_col',
+                # 'result_container': 'div#search div.MjjYud ',
+                # 'link': 'div#search div.MjjYud .yuRUbf a:first-child::attr(href)',
+                # 'snippet': 'div#search div.MjjYud .kb0PBd .VwiC3b::text',
+                # 'title': 'div#search div.MjjYud .yuRUbf span .VuuXrf::text',
+                # 'visible_link': 'div#search div.MjjYud span cite::text',
+            },
             'de_ip_news_items': {
                 'container': 'li.card-section',
                 'link': 'a._Dk::attr(href)',
@@ -384,6 +399,21 @@ class GoogleParser(Parser):
                 'snippet': 'div.s span.st::text',
                 'title': 'div.r > a > h3::text',
                 'visible_link': '.ads-visurl cite::text',
+            },
+            'cn_ip': {
+                # 于20240910添加
+                'container': '#center_col',
+                'result_container': 'div.uEierd',
+                'link': 'div.v5yQqb > a::attr(href)',
+                'snippet': 'div.Va3FIb div::text',
+                'title': 'span.nMdasd > span > span.yUTMj > div.Sqrs4e::text',
+                'visible_link': 'span.chcHdb > span.nMdasd::text',
+                # 'container': '#center_col',
+                # 'result_container': 'div#bottomads .uEierd',
+                # 'link': 'div#bottomads .uEierd .v5yQqb a::attr(href)',
+                # 'snippet': 'div#bottomads .uEierd .Va3FIb div::text',
+                # 'title': 'div#bottomads .uEierd .oVrGyb div.Sqrs4e::text',
+                # 'visible_link': 'div#bottomads .uEierd .chcHdb span.nMdasd::text',
             },
             'de_ip': {
                 'container': '#center_col',
@@ -404,6 +434,23 @@ class GoogleParser(Parser):
                 'title': 'div[role="heading"] span::text',
                 'rating': 'span.BTtC6e::text',
                 'num_reviews': '.rllt__details::text',
+            },
+            'cn_ip': {
+                # 于20240910添加
+                'container': '#center_col',
+                'result_container': 'div.x3SAYd > div.zIGF1d',
+                'link': '',
+                'snippet': 'div.cXedhc > a > div > div.rllt__details > div:nth-child(3)::text',
+                'title': 'div.dbg0pd > span.OSrXXb::text',
+                'rating': 'span.Y0A0hc > span.yi40Hd::text',
+                'num_reviews': 'span.Y0A0hc > span.RDApEe::text',
+                # 'container': '#center_col',
+                # 'result_container': 'div.x3SAYd > div.zIGF1d',
+                # 'link': '',
+                # 'snippet': 'div.x3SAYd div.zIGF1d .rllt__details div:nth-child(3)::text',
+                # 'title': 'div.x3SAYd div.zIGF1d .OSrXXb::text',
+                # 'rating': 'div.x3SAYd div.zIGF1d .yi40Hd::text',
+                # 'num_reviews': 'div.rllt__details span.Y0A0hc .RDApEe::text',
             }
         },
         'ads_aside': {
@@ -418,6 +465,12 @@ class GoogleParser(Parser):
                 'result_container': '.rg_bx',
                 'link': 'a.rg_l::attr(href)',
                 'snippet': '.a-no-hover-decoration::text',
+            },
+            'cn_ip': {
+                # 于20240910添加
+                'container': 'div.wIjY0d',
+                'result_container': 'div.wIjY0d div.eA0Zlc',
+                'link': 'div.wIjY0d div.eA0Zlc a.EZAeBe::attr(href)'
             },
             'de_ip_http_mode': {
                 'container': '#search',
@@ -501,6 +554,16 @@ class YandexParser(Parser):
                 'snippet': 'div.text-container::text',
                 'title': 'div.organic__url-text::text',
                 'visible_link': '.typo_type_greenurl::text'
+            },
+            'cn_ip': {
+                # 于20240911添加
+                'container': '#serp-list',
+                'result_container': 'li.serp-item',
+                'link': 'div.VanillaReact > a.link::attr(href)',
+                'snippet': 'div.text-container::text',
+                'title': 'h2.OrganicTitle-LinkText > span::text',
+                'visible_link': 'div.Path > a.link::text'
+                #
             }
         }
     }
@@ -516,7 +579,13 @@ class YandexParser(Parser):
                 'container': '.page-layout__content-wrapper',
                 'result_container': '.serp-item__preview',
                 'link': '.serp-item__preview .serp-item__link::attr(href)'
-            }
+            },
+            'cn_ip': {
+                # 于20240911添加
+                'container': '.page-layout__content-wrapper',
+                'result_container': 'div.SerpPage',
+                'link': 'div.ContentImage > a.Link::attr(href)'
+            },
         }
     }
 
@@ -589,12 +658,19 @@ class BingParser(Parser):
     normal_search_selectors = {
         'results': {
             'us_ip': {
+                # Sam.Z于20240911修改，原内容如下
+                # 'container': '#b_results',
+                # 'result_container': '.b_algo',
+                # 'link': 'h2 > a::attr(href)',
+                # 'snippet': '.b_caption > p::text',
+                # 'title': 'h2::text',
+                # 'visible_link': 'cite::text'
                 'container': '#b_results',
                 'result_container': '.b_algo',
-                'link': 'h2 > a::attr(href)',
-                'snippet': '.b_caption > p::text',
-                'title': 'h2::text',
-                'visible_link': 'cite::text'
+                'link': 'li > h2 > a::attr(href)',
+                'snippet': 'p.b_algoSlug::text',
+                'title': 'h2 > a > i::text',
+                'visible_link': 'div.tpmeta > div.b_attribution > cite::text'
             },
             'de_ip': {
                 'container': '#b_results',
@@ -611,9 +687,27 @@ class BingParser(Parser):
                 'title': ' h5 a::text',
                 'visible_link': 'cite::text'
             },
+            'cn_ip': {
+                # 于20240911添加并修改
+                'container': '#b_results',
+                'result_container': 'li.b_algo',
+                'link': 'h2 > a::attr(href)',
+                'snippet': 'p.b_algoSlug::text',
+                'title': 'h2 > a::text',
+                'visible_link': 'div.tpmeta > div.b_attribution > cite::text'
+            },
         },
         'ads_main': {
             'us_ip': {
+                'container': '#b_results .b_ad',
+                'result_container': '.sb_add',
+                'link': 'h2 > a::attr(href)',
+                'snippet': '.sb_addesc::text',
+                'title': 'h2 > a::text',
+                'visible_link': 'cite::text'
+            },
+            'cn_ip': {
+                # 于20240911添加，因未发现广告标签，暂未根据具体网站模板修改
                 'container': '#b_results .b_ad',
                 'result_container': '.sb_add',
                 'link': 'h2 > a::attr(href)',
@@ -638,6 +732,18 @@ class BingParser(Parser):
                 'container': '#dg_c .imgres',
                 'result_container': '.dg_u',
                 'link': 'a.dv_i::attr(m)'
+            },
+            'us_ip': {
+                # 于20240911添加并修改
+                'container': 'div#mmComponent_images_1',
+                'result_container': 'ul.dgControl_list > li',
+                'link': 'div.iuscp > div.imgpt > a::attr(href)'
+            },
+            'cn_ip': {
+                # 于20240911添加并修改
+                'container': 'div#mmComponent_images_1',
+                'result_container': 'ul.dgControl_list > li',
+                'link': 'div.iuscp > div.imgpt > a::attr(href)'
             },
         }
     }
@@ -707,12 +813,37 @@ class YahooParser(Parser):
                 'title': 'h3.title a::text',
                 'visible_link': 'span::text'
             },
+            'ca_ip': {
+                # 于20240911添加修改
+                'container': '#main',
+                'result_container': '.web-res',
+                'link': 'div > h3 > a::attr(href)',
+                'snippet': 'div.compText > p::text',
+                'title': 'div > h3 > a::text',
+                'visible_link': 'div.fc-obsidian::text'
+            },
         },
+        'ads_main': {
+            'ca_ip': {
+                # 于20240911添加并修改
+                'container': '.searchCenterTopAds',
+                'result_container': 'div.layoutMiddle',
+                'link': 'div.compTitle > a::attr(href)',
+                'snippet': 'div.aAbs > p.fbox-ov > span::text',
+                'title': 'div.compTitle > a > h3::text',
+                'visible_link': 'div.compTitle > a::text'
+            },
     }
 
     image_search_selectors = {
         'results': {
             'ch_ip': {
+                'container': '#results',
+                'result_container': '#sres > li',
+                'link': 'a::attr(href)'
+            },
+            'ca_ip': {
+                # 于20240911添加，原内容一样可用
                 'container': '#results',
                 'result_container': '#sres > li',
                 'link': 'a::attr(href)'
@@ -793,6 +924,15 @@ class BaiduParser(Parser):
                 'title': 'h3 > a.t::text',
                 'visible_link': 'span.c-showurl::text'
             },
+            'cn_ip': {
+                # 于20240912添加修改
+                'container': '#content_left',
+                'result_container': '.result',
+                'link': 'div.c-container > div > h3.c-title > a::attr(href)',
+                'snippet': '.c-abstract::text',
+                'title': 'div.c-container > div > div > div.c-gap-top-small::text',
+                'visible_link': 'span.c-showurl::text'
+            },
             'nojs': {
                 'container': '#content_left',
                 'result_container': '.result',
@@ -810,6 +950,12 @@ class BaiduParser(Parser):
                 'container': '#imgContainer',
                 'result_container': '.pageCon > li',
                 'link': '.imgShow a::attr(href)'
+            },
+            'cn_ip': {
+                # 于20240912添加修改
+                'container': '#imgContainer',
+                'result_container': '.imgbox > .imgbox-border',
+                'link': '.imgbox-border > a::attr(href)'
             },
         }
     }
@@ -869,6 +1015,15 @@ class DuckduckgoParser(Parser):
                 'title': '.result__title > a::text',
                 'visible_link': '.result__url__domain::text'
             },
+            'cn_ip': {
+                # 于20240912添加修改
+                'container': 'div.qrc3T8W2PIYg9L63oA06 > div.FMPme3X940xAt4SKPFuw',
+                'result_container': 'ol > li.wLL07_0Xnd1QZpzpfR4W',
+                'link': 'h2.LnpumSThxEWMIsDdAT17 > a::attr(href)',
+                'snippet': 'div.E2eLOJr8HctVnDOTM8fs::text',
+                'title': 'div.ikg2IXiCD14iVX7AdZo1 > h2 >a::text',
+                'visible_link': 'div.mwuQiMOjmFJ5vmN6Vcqw > a::text'
+            },
             'non_javascript_mode': {
                 'container': '#content',
                 'result_container': '.results_links',
@@ -878,6 +1033,17 @@ class DuckduckgoParser(Parser):
                 'visible_link': '.url::text'
             },
         },
+    }
+    
+    image_search_selectors = {
+        # 于20240912添加修改
+        'results': {
+            'cn_ip': {
+                'container': '.zci__main',
+                'result_container': '.tile--img > .tile--img__media',
+                'link': '.tile--img > a::attr(href)'
+            },
+        }
     }
 
     def __init__(self, *args, **kwargs):
@@ -924,6 +1090,15 @@ class AskParser(Parser):
                 'snippet': '.abstract::text',
                 'title': '.txt_lg.b::text',
                 'visible_link': '.durl span::text'
+            },
+            'cn_ip': {
+                # 于20240912添加修改
+                'container': 'div.results',
+                'result_container': 'div.result',
+                'link': 'div.result-title > a::attr(href)',
+                'snippet': 'p.result-abstract::text',
+                'title': 'div.result-title > a::text',
+                'visible_link': '.result-url-section > a > span.result-url::text'
             },
             'de_ip_december_2015': {
                 'container': '.l-mid-content',
