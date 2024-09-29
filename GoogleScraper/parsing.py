@@ -1448,10 +1448,16 @@ def get_parser_by_url(url):
         parser = BaiduParser
     elif re.search(r'^https://duckduckgo\.com', url):
         parser = DuckduckgoParser
-    if re.search(r'^http[s]?://[a-z]{2}?\.ask', url):
+    elif re.search(r'^http[s]?://[a-z]{2}?\.ask', url):
         parser = AskParser
-    if re.search(r'^http[s]?://blekko', url):
+    elif re.search(r'^http[s]?://blekko', url):
         parser = BlekkoParser
+        
+    # 以下两个elif于20240929添加
+    elif re.search(r'^http[s]?://www\.amazon', url):
+        parser = AmazonParser
+    elif re.search(r'^http[s]?://www\.ebay', url):
+        parser = eBayParser
     if not parser:
         raise UnknowUrlException('No parser for {}.'.format(url))
 
@@ -1486,6 +1492,12 @@ def get_parser_by_search_engine(search_engine):
         return AskParser
     elif search_engine == 'blekko':
         return BlekkoParser
+        
+    # 以下两个elif于20240927添加
+    elif search_engine == 'amazon':
+        return AmazonParser
+    elif search_engine == 'ebay':
+        return ebayParser
     else:
         raise NoParserForSearchEngineException('No such parser for "{}"'.format(search_engine))
 
