@@ -1148,6 +1148,280 @@ class BlekkoParser(Parser):
     }
 
 
+class eBayParser(Parser):
+    """Parses SERP pages of the Google search engine."""
+    # ADDED ON 20240928
+
+    search_engine = 'ebay'
+
+    search_types = ['normal', 'image']
+
+    effective_query_selector = ['div.srp-layout-inner']
+
+    no_results_selector = []
+
+    num_results_search_selectors = ['h1.srp-controls__count-heading']
+
+    page_number_selectors = ['.pagination__items a[aria-current="page"]::text']
+
+    normal_search_selectors = {
+        'results': {
+            'us_ip': {
+                # 以下内容于20240929添加
+                'container': 'div.srp-river-results',
+                'result_container': 'ul li.s-item__pl-on-bottom',
+                'link': 'div.s-item__info > a::attr(href)',
+                'snippet': 'div.s-item__info > a div.s-item__title span::text',
+                'title': 'div.s-item__info > a div.s-item__title span::text',
+                'price': 'span.s-item__price::text',
+                'seller': 'span.s-item__seller-info-text::text'
+            }
+        },
+        'ads_main': {
+            'us_ip': {
+                'container': 'div.hsOH',
+                'result_container': 'div.Vdzd',
+                'link': 'a.Ma4Z::attr(href)',
+                'snippet': 'a.Ma4Z img::attr(alt)',
+                'title': 'a.Ma4Z img::attr(title)',
+            },
+        },
+        # those css selectors are probably not worth much
+        'maps_local': {
+            'de_ip': {
+                'container': '',
+                'result_container': '',
+                'link': '',
+                'snippet': '',
+                'title': '',
+                'rating': '',
+                'num_reviews': '',
+            },
+        },
+        'ads_aside': {
+
+        }
+    }
+
+    image_search_selectors = {
+        'results': {
+            'us_ip': {
+                'container': 'div.srp-river-results',
+                'result_container': 'ul li.s-item__pl-on-bottom',
+                'link': 'img::attr(src)'
+            },
+        }
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def after_parsing(self):
+        """Clean the urls.
+
+        A typical scraped results looks like the following:
+
+        '/url?q=http://www.youtube.com/user/Apple&sa=U&ei=\
+        lntiVN7JDsTfPZCMgKAO&ved=0CFQQFjAO&usg=AFQjCNGkX65O-hKLmyq1FX9HQqbb9iYn9A'
+
+        Clean with a short regex.
+        """
+        super().after_parsing()
+
+        if self.searchtype == 'normal':
+            if self.num_results > 0:
+                self.no_results = False
+            elif self.num_results <= 0:
+                self.no_results = True
+
+            if 'No results found for' in self.html or 'did not match any documents' in self.html:
+                self.no_results = True
+
+            # finally try in the snippets
+            if self.no_results is True:
+                for key, i in self.iter_serp_items():
+
+                    if 'snippet' in self.search_results[key][i] and self.query:
+                        if self.query.replace('"', '') in self.search_results[key][i]['snippet']:
+                            self.no_results = False
+
+        clean_regexes = {
+            'normal': r'/url\?q=(?P<url>.*?)&sa=U&ei=',
+            'image': r'imgres\?imgurl=(?P<url>.*?)&'
+        }
+
+        for key, i in self.iter_serp_items():
+            result = re.search(
+                clean_regexes[self.searchtype],
+                self.search_results[key][i]['link']
+            )
+            if result:
+                self.search_results[key][i]['link'] = unquote(result.group('url'))
+
+
+class AmazonParser(Parser):
+    """Parses SERP pages of the Google search engine."""
+    # ADDED ON 20240928
+
+    search_engine = 'amazon'
+
+    search_types = ['normal', 'image']
+
+    effective_query_selector = []
+
+    no_results_selector = []
+
+    num_results_search_selectors = ['div.s-breadcrumb div.a-section']
+
+    page_number_selectors = ['span.s-pagination-selected::text']
+
+    normal_search_selectors = {
+        'results': {
+            'de_ip': {
+                'container': 'div.s-main-slot',
+                'result_container': 'div.puis-card-container',
+                'link': 'h2 > a.a-text-normal::attr(href)',
+                'snippet': 'h2 > span.a-text-normal::text',
+                'title': 'h2 > span.a-text-normal::text',
+                'rating': 'div.a-spacing-top-micro div.a-size-small span.a-icon-alt::text',
+                'price': 'a.s-underline-link-text > span.a-price span.a-offscreen::text'
+            },
+            'us_ip': {
+                'container': 'div.s-main-slot',
+                'result_container': 'div.puis-card-container',
+                'link': 'h2 > a.a-text-normal::attr(href)',
+                'snippet': 'h2 span.a-text-normal::text',
+                'title': 'h2 span.a-text-normal::text',
+                'rating': 'div.a-spacing-top-micro div.a-size-small span.a-icon-alt::text',
+                'price': 'a.s-underline-link-text > span.a-price span.a-offscreen::text'
+            },
+            'cn_ip': {
+                'container': '',
+                'result_container': '',
+                'link': '',
+                'snippet': '',
+                'title': '',
+                'rating': '',
+                'price': ''
+            },
+        },
+        'ads_main': {
+            'us_ip': {
+                'container': 'div._bGlmZ_container_yQKU1',
+                'result_container': 'div._bGlmZ_item_3A5uK',
+                'link': 'div._bGlmZ_container_294GZ > a._bGlmZ_link_2cNGK::attr(href)',
+                'snippet': 'div._bGlmZ_expandedTitleT1_zMP-Z span.a-truncate-cut::text',
+                'title': 'div._bGlmZ_expandedTitleT1_zMP-Z span.a-truncate-cut::text',
+                'rating': 'div._bGlmZ_inline_1FGCb span.a-icon-alt::text',
+            },
+            'cn_ip': {
+                'container': 'div._bGlmZ_container_yQKU1',
+                'result_container': 'div._bGlmZ_item_3A5uK',
+                'link': 'div._bGlmZ_container_294GZ > a._bGlmZ_link_2cNGK::attr(href)',
+                'snippet': 'div._bGlmZ_expandedTitleT1_zMP-Z span.a-truncate-cut::text',
+                'title': 'div._bGlmZ_expandedTitleT1_zMP-Z span.a-truncate-cut::text',
+                'rating': 'div._bGlmZ_inline_1FGCb span.a-icon-alt::text',
+            },
+            'de_ip': {
+                'container': 'div._bGlmZ_container_yQKU1',
+                'result_container': 'div._bGlmZ_item_3A5uK',
+                'link': 'div._bGlmZ_container_294GZ > a._bGlmZ_link_2cNGK::attr(href)',
+                'snippet': 'div._bGlmZ_expandedTitleT1_zMP-Z span.a-truncate-cut::text',
+                'title': 'div._bGlmZ_expandedTitleT1_zMP-Z span.a-truncate-cut::text',
+                'rating': 'div._bGlmZ_inline_1FGCb span.a-icon-alt::text',
+            },
+        },
+        # those css selectors are probably not worth much
+        'maps_local': {
+            'de_ip': {
+                # 于20240929从GoogleParser上复制粘贴未做修改
+                'container': '#center_col',
+                'result_container': '.ccBEnf > div',
+                'link': 'link::attr(href)',
+                'snippet': 'div.rl-qs-crs-t::text',
+                'title': 'div[role="heading"] span::text',
+                'rating': 'span.BTtC6e::text',
+                'num_reviews': '.rllt__details::text',
+            },
+            'cn_ip': {
+                # 于20240929从GoogleParser上复制粘贴未做修改
+                'container': '#center_col',
+                'result_container': 'div.x3SAYd > div.zIGF1d',
+                'link': '',
+                'snippet': 'div.cXedhc > a > div > div.rllt__details > div:nth-child(3)::text',
+                'title': 'div.dbg0pd > span.OSrXXb::text',
+                'rating': 'span.Y0A0hc > span.yi40Hd::text',
+                'num_reviews': 'span.Y0A0hc > span.RDApEe::text',
+            }
+        },
+        'ads_aside': {
+
+        }
+    }
+
+    image_search_selectors = {
+        'results': {
+            'de_ip': {
+                # 于20240929添加
+                'container': 'div.s-matching-dir',
+                'result_container': 'div.puis-card-container > div.a-spacing-base',
+                'link': 'span.rush-component > a::attr(href)'
+            },
+            'us_ip': {
+                # 于20240929添加
+                'container': 'div.s-matching-dir',
+                'result_container': 'div.puis-card-container > div.a-spacing-base',
+                'link': 'span.rush-component > a::attr(href)'
+            },
+        }
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def after_parsing(self):
+        """Clean the urls.
+
+        A typical scraped results looks like the following:
+
+        '/url?q=http://www.youtube.com/user/Apple&sa=U&ei=\
+        lntiVN7JDsTfPZCMgKAO&ved=0CFQQFjAO&usg=AFQjCNGkX65O-hKLmyq1FX9HQqbb9iYn9A'
+
+        Clean with a short regex.
+        """
+        super().after_parsing()
+
+        if self.searchtype == 'normal':
+            if self.num_results > 0:
+                self.no_results = False
+            elif self.num_results <= 0:
+                self.no_results = True
+
+            if 'No results found for' in self.html or 'did not match any documents' in self.html:
+                self.no_results = True
+
+            # finally try in the snippets
+            if self.no_results is True:
+                for key, i in self.iter_serp_items():
+
+                    if 'snippet' in self.search_results[key][i] and self.query:
+                        if self.query.replace('"', '') in self.search_results[key][i]['snippet']:
+                            self.no_results = False
+
+        clean_regexes = {
+            'normal': r'/url\?q=(?P<url>.*?)&sa=U&ei=',
+            'image': r'imgres\?imgurl=(?P<url>.*?)&'
+        }
+
+        for key, i in self.iter_serp_items():
+            result = re.search(
+                clean_regexes[self.searchtype],
+                self.search_results[key][i]['link']
+            )
+            if result:
+                self.search_results[key][i]['link'] = unquote(result.group('url'))
+
+
 def get_parser_by_url(url):
     """Get the appropriate parser by an search engine url.
 
