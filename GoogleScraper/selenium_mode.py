@@ -136,6 +136,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'duckduckgo': '',
         'googleimg': '#pnnext',
         'baiduimg': '.n',
+        
+        # Added on 20240927
+        'amazon': '.s-pagination-next',
+        'ebay': '.su-pagination a',
     }
 
     input_field_selectors = {
@@ -150,6 +154,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'google': (By.NAME, 'q'),
         'googleimg': (By.NAME, 'as_q'),
         'baiduimg': (By.NAME, 'word'),
+
+        # Added on 20240927
+        'amazon': (By.NAME, 'site-search'),
+        'ebay': (By.NAME, '_nkw'),
     }
 
     param_field_selectors = {
@@ -175,6 +183,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'duckduckgo': 'https://duckduckgo.com/',
         'ask': 'http://ask.com/',
         'blekko': 'http://blekko.com/',
+
+        # Added on 20240927
+        'amazon': 'https://www.amazon.com',
+        'ebay': 'https://www.ebay.com',
     }
 
     image_search_locations = {
@@ -188,6 +200,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'blekko': None,
         'googleimg':'https://www.google.com/advanced_image_search',
         'baiduimg': 'http://image.baidu.com/',
+
+        # Added on 20240927
+        'amazon': 'https://www.amazon.com',
+        'ebay': 'https://www.ebay.com',
     }
 
     def __init__(self, config, *args, captcha_lock=None, browser_num=1, **kwargs):
@@ -627,6 +643,12 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 pass
             elif self.search_engine_name == 'ask':
                 selector = '#paging .pgcsel .pg'
+                
+            # 以下两个elif于20240927添加
+            elif self.search_engine_name == 'amazon':
+                selector = 'span.s-pagination-selected'
+            elif self.search_engine_name == 'ebay':
+                selector = '.pagination .pagination__items a[aria-current="page"]'
 
             if self.search_engine_name == 'duckduckgo':
                 time.sleep(1.5)
