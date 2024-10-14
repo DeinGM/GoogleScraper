@@ -845,6 +845,7 @@ class YahooParser(Parser):
                 'title': 'div.compTitle > a > h3::text',
                 'visible_link': 'div.compTitle > a::text'
             },
+        },
     }
 
     image_search_selectors = {
