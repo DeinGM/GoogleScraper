@@ -340,6 +340,9 @@ class GoogleParser(Parser):
 
     search_engine = 'google'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal', 'image']
 
     effective_query_selector = ['#topstuff .med > b::text', '.med > a > b::text']
@@ -532,6 +535,9 @@ class YandexParser(Parser):
 
     search_engine = 'yandex'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal', 'image']
 
     no_results_selector = ['.message .misspell__message::text']
@@ -644,6 +650,9 @@ class BingParser(Parser):
     """Parses SERP pages of the Bing search engine."""
 
     search_engine = 'bing'
+
+    # 20241012添加
+    list_of_domains = {}
 
     search_types = ['normal', 'image']
 
@@ -785,6 +794,9 @@ class YahooParser(Parser):
 
     search_engine = 'yahoo'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal', 'image']
 
     no_results_selector = []
@@ -903,6 +915,9 @@ class BaiduParser(Parser):
 
     search_engine = 'baidu'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal', 'image']
 
     num_results_search_selectors = ['#container .nums']
@@ -994,6 +1009,9 @@ class DuckduckgoParser(Parser):
 
     search_engine = 'duckduckgo'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal']
 
     num_results_search_selectors = []
@@ -1071,6 +1089,9 @@ class AskParser(Parser):
 
     search_engine = 'ask'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal']
 
     num_results_search_selectors = []
@@ -1126,6 +1147,9 @@ class BlekkoParser(Parser):
 
     search_engine = 'blekko'
 
+    # 20241012添加
+    list_of_domains = {}
+
     search_types = ['normal']
 
     effective_query_selector = ['']
@@ -1153,6 +1177,12 @@ class eBayParser(Parser):
     # ADDED ON 20240928
 
     search_engine = 'ebay'
+
+    # 20241012添加
+    list_of_domains = {'US': 'www.ebay.com', 'CN': 'www.ebay.cn', 'CH': 'www.ebay.ch',
+                       'CA': 'www.ebay.ca', 'GB': 'www.ebay.co.uk',
+                       'DE': 'www.ebay.de', 'IT': 'www.ebay.it',
+                       'FR': 'www.ebay.fr', 'JP': 'www.ebay.co.jp', }
 
     search_types = ['normal', 'image']
 
@@ -1264,6 +1294,12 @@ class AmazonParser(Parser):
     # ADDED ON 20240928
 
     search_engine = 'amazon'
+
+    # 20241012添加
+    list_of_domains = {'US': 'www.amazon.com', 'CN': 'www.amazon.com',
+                       'CA': 'www.amazon.ca', 'GB': 'www.amazon.co.uk',
+                       'DE': 'www.amazon.de', 'IT': 'www.amazon.it',
+                       'FR': 'www.amazon.fr',  'JP': 'www.amazon.co.jp',}
 
     search_types = ['normal', 'image']
 
