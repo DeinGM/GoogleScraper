@@ -25,7 +25,13 @@ class JsonStreamWriter():
     """Writes consecutive objects to an json output file."""
 
     def __init__(self, filename):
-        self.file = open(filename, 'wt', encoding='utf-8', newline='')
+        # self.file = open(filename, 'wt', encoding='utf-8', newline='')
+        # 20241012修改添加
+        if os.path.exists(filename):
+            self.file = open(filename, 'a', encoding='utf-8', newline='')
+        else:
+            self.file = open(filename, 'wt', encoding='utf-8', newline='')
+            
         self.file.write('[')
         self.last_object = None
 
@@ -48,7 +54,13 @@ class CsvStreamWriter():
         # every row in the csv output file should contain all fields
         # that are in the table definition. Except the id, they have the
         # same name in both tables
-        self.file = open(filename, 'wt', encoding='utf-8', newline='')
+        # self.file = open(filename, 'wt', encoding='utf-8', newline='')
+        # 20241012修改添加
+        if os.path.exists(filename):
+            self.file = open(filename, 'a', encoding='utf-8', newline='')
+        else:
+            self.file = open(filename, 'wt', encoding='utf-8', newline='')
+            
         self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
         self.dict_writer.writeheader()
 
