@@ -137,7 +137,12 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         'bing': {},
         'yahoo': {},
         'baidu': {},
-        'yandex': {},
+        'yandex': {
+            # Added on 20240930
+            'inurl': '/showcaptcha?cc',
+            'inhtml': 'looks like requests sent from your device are automated.',
+            'inhtmlCN': '自动发送'
+        },
         'ask': {},
         'blekko': {},
         'duckduckgo': {}
