@@ -23,6 +23,10 @@ from sqlalchemy import create_engine, UniqueConstraint
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 
+# 20241014添加
+from GoogleScraper import get_config
+import os
+
 Base = declarative_base()
 
 scraper_searches_serps = Table('scraper_searches_serps', Base.metadata,
@@ -119,6 +123,22 @@ class SearchEngineResultsPage(Base):
             if isinstance(value, list):
                 for link in value:
                     parsed = urlparse(link['link'])
+
+                    # 20241012 添加
+                    if not parsed:
+                        if os.path.exists("sams_personal_scrape_config.py"):
+                            cfgs = get_config(external_configuration_file='sams_personal_scrape_config.py')
+                        # elif os.path.exists("scraping.py"):
+                        #     cfgs = get_config(external_configuration_file='scrape_config.py')
+                        else:
+                            print(f"配置文件sams_personal_scrape_config.py未找到，程序中止。")
+                            exit()
+                        match parser.search_engine:
+                            case 'amazon' | 'ebay':
+                                parsed = urlparse(cfgs.get('{}_search_url'.format(parser.search_engine), None))
+                            case _:
+                                print(f"parser.search_engine未定义，默认用google.com")
+                                parsed = urlparse('https://www.google.com')
 
                     # fill with nones to prevent key errors
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link', 'rating', 'num_reviews') if key not in link]
