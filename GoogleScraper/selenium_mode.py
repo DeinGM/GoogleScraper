@@ -981,3 +981,25 @@ class AskSelScrape(SelScrape):
                 pass
 
         WebDriverWait(self.webdriver, 5).until(wait_until_keyword_in_url)
+
+
+class AmazonScrape(SelScrape):
+    # Added by Sam on 20240927
+
+    def __init__(self, *args, **kwargs):
+        SelScrape.__init__(self, *args, **kwargs)
+        self.largest_id = 0
+
+
+class eBayScrape(SelScrape):
+    # Added by Sam on 20240927
+
+    def __init__(self, *args, **kwargs):
+        SelScrape.__init__(self, *args, **kwargs)
+
+
+class WooCommerceScrape(SelScrape):
+    # Added by Sam on 20240927
+
+    def __init__(self, *args, **kwargs):
+        SelScrape.__init__(self, *args, **kwargs)
