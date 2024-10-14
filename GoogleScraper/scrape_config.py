@@ -151,6 +151,12 @@ http_duckduckgo_search_url = 'https://duckduckgo.com/html/?'
 # The ask base search url
 ask_search_url = 'http://de.ask.com/web?'
 
+# The Amazon base search url, added on 20240930
+amazon_search_url = 'https://www.amazon.com/s?'
+
+# The eBay base search url, added on 20240930
+ebay_search_url = 'https://www.ebay.com/sch/i.html?'
+
 # The search type. Currently, the following search modes are
 # supported for some search engine=  normal, video, news and image search.
 # "normal" search type is supported in all search engines.
