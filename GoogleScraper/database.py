@@ -24,7 +24,6 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 
 # 20241014添加
-from GoogleScraper import get_config
 import os
 
 Base = declarative_base()
@@ -126,13 +125,6 @@ class SearchEngineResultsPage(Base):
 
                     # 20241012 添加
                     if not parsed:
-                        if os.path.exists("sams_personal_scrape_config.py"):
-                            cfgs = get_config(external_configuration_file='sams_personal_scrape_config.py')
-                        # elif os.path.exists("scraping.py"):
-                        #     cfgs = get_config(external_configuration_file='scrape_config.py')
-                        else:
-                            print(f"配置文件sams_personal_scrape_config.py未找到，程序中止。")
-                            exit()
                         match parser.search_engine:
                             case 'amazon' | 'ebay':
                                 parsed = urlparse(webdriver.current_url)
