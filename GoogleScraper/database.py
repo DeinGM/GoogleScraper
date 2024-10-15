@@ -107,7 +107,7 @@ class SearchEngineResultsPage(Base):
         """
         return self.num_results == 0 or self.effective_query
 
-    def set_values_from_parser(self, parser):
+    def set_values_from_parser(self, parser, webdriver):
         """Populate itself from a parser object.
 
         Args:
@@ -135,7 +135,7 @@ class SearchEngineResultsPage(Base):
                             exit()
                         match parser.search_engine:
                             case 'amazon' | 'ebay':
-                                parsed = urlparse(cfgs.get('{}_search_url'.format(parser.search_engine), None))
+                                parsed = urlparse(webdriver.current_url)
                             case _:
                                 print(f"parser.search_engine未定义，默认用google.com")
                                 parsed = urlparse('https://www.google.com')
