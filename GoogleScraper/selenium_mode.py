@@ -770,7 +770,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 except WebDriverException as e:
                     self.html = self.webdriver.page_source
 
-                super().after_search()
+                super().after_search(self.webdriver)
 
                 # Click the next page link not when leaving the loop
                 # in the next iteration.
