@@ -286,7 +286,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         """
         self.status = 'Malicious request detected: {}'.format(status_code)
 
-    def store(self):
+    def store(self, webdriver):
         """Store the parsed data in the sqlalchemy scoped session."""
         assert self.session, 'No database session.'
 
@@ -297,7 +297,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
 
         with self.db_lock:
 
-            serp = parse_serp(self.config, parser=self.parser, scraper=self, query=self.query)
+            serp = parse_serp(self.config, webdriver, parser=self.parser, scraper=self, query=self.query)
 
             self.scraper_search.serps.append(serp)
             self.session.add(serp)
@@ -386,14 +386,14 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                 pass
 
 
-    def after_search(self):
+    def after_search(self, webdriver):
         """Store the results and parse em.
 
         Notify the progress queue if necessary.
         """
         self.search_number += 1
 
-        if not self.store():
+        if not self.store(webdriver):
             logger.debug('No results to store for keyword: "{}" in search engine: {}'.format(self.query,
                                                                                     self.search_engine_name))
 
