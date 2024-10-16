@@ -146,6 +146,14 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         'ask': {},
         'blekko': {},
         'duckduckgo': {}
+
+        # Added on 20240930
+        'amazon': {
+            'inurl': '/errors/validateCaptcha?',
+            'inhtml': "make sure you're not a robot.",
+            'inhtmlCN': '不是机器人',
+        },
+        'ebay': {}
     }
 
     def __init__(self, config, cache_manager=None, jobs=None, scraper_search=None, session=None, db_lock=None, cache_lock=None,
