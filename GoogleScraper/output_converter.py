@@ -29,11 +29,11 @@ class JsonStreamWriter():
         # 20241012修改添加
         if os.path.exists(filename):
             self.file = open(filename, 'a', encoding='utf-8', newline='')
+            self.last_object = None
         else:
-            self.file = open(filename, 'wt', encoding='utf-8', newline='')
-            
-        self.file.write('[')
-        self.last_object = None
+            self.file = open(filename, 'wt', encoding='utf-8', newline='')            
+            self.file.write('[')
+            self.last_object = None
 
     def write(self, obj):
         if self.last_object:
@@ -58,11 +58,11 @@ class CsvStreamWriter():
         # 20241012修改添加
         if os.path.exists(filename):
             self.file = open(filename, 'a', encoding='utf-8', newline='')
+            self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
         else:
-            self.file = open(filename, 'wt', encoding='utf-8', newline='')
-            
-        self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
-        self.dict_writer.writeheader()
+            self.file = open(filename, 'wt', encoding='utf-8', newline='')            
+            self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
+            self.dict_writer.writeheader()
 
     def write(self, data, serp):
         # one row per link
