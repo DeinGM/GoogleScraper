@@ -435,15 +435,18 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         needles = self.malicious_request_needles[self.search_engine_name]
 
         check_in_cn = needles and (needles['inurl'] in self.webdriver.current_url \
-                                   and needles['inhtmlinCN'] in self.webdriver.page_source)
+                                   and needles['inhtmlCN'] in self.webdriver.page_source)
         check_in_en = needles and (needles['inurl'] in self.webdriver.current_url \
                                    and needles['inhtml'] in self.webdriver.page_source)
         check_in_fr = needles and (needles['inurl'] in self.webdriver.current_url
                                    and needles['inhtmlFR'] in self.webdriver.page_source)
         check_in_it = needles and (needles['inurl'] in self.webdriver.current_url \
                                    and needles['inhtmlIT'] in self.webdriver.page_source)
+        check_in_de = needles and (needles['inurl'] in self.webdriver.current_url \
+                                   or needles['inhtmlDE'] in self.webdriver.page_source)
 
-        return check_in_en or check_in_cn or check_in_fr or check_in_it
+        return check_in_en or check_in_cn or check_in_fr or check_in_it or check_in_de
+
 
     def handle_request_denied(self):
         """Checks whether Google detected a potentially harmful request.
