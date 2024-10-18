@@ -132,9 +132,10 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         'google': {
             'inurl': '/sorry/',
             'inhtml': 'detected unusual traffic',
-            'inhtmlinCN': '存在异常流量',
+            'inhtmlCN': '存在异常流量',
             'inhtmlFR': "trafic inhabituel détecté",
             'inhtmlIT': "rilevato traffico insolito",
+            'inhtmlDE': "ungewöhnlichen Verkehr festgestellt",
         },
         'bing': {},
         'yahoo': {},
@@ -145,7 +146,8 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
             'inhtml': 'looks like requests sent from your device are automated.',
             'inhtmlCN': '自动发送',
             'inhtmlFR': "votre appareil soient automatisées.",
-            'inhtmlIT': "tuo dispositivo siano automatizzate.",            
+            'inhtmlIT': "tuo dispositivo siano automatizzate.",
+            'inhtmlDE': "Von Ihrem Gerät gesendete Anfragen werden automatisiert.",            
         },
         'ask': {},
         'blekko': {},
@@ -158,6 +160,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
             'inhtmlCN': '不是机器人',
             'inhtmlFR': "que vous n'êtes pas un robot.",
             'inhtmlIT': "per capire se l'utente è un robot.",
+            'inhtmlDE': "Sie kein Bot sind.",
         },
         'ebay': {}
     }
