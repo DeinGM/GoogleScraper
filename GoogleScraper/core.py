@@ -375,6 +375,10 @@ def main(return_results=False, parse_cmd_line=True, config_from_dict=None):
             used_search_engines=','.join(search_engines)
         )
 
+    # ADDED ON 20241018
+    if len(search_engines) == 1 and len(keywords) == 1:
+        num_workers = 1
+        
     # First of all, lets see how many requests remain to issue after searching the cache.
     if config.get('do_caching'):
         scrape_jobs = cache_manager.parse_all_cached_files(scrape_jobs, session, scraper_search)
