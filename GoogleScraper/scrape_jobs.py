@@ -68,12 +68,52 @@ def default_scrape_jobs_for_keywords(keywords, search_engines, scrape_method, nu
     Returns:
         A dict of scrapejobs.
     """
+    # Original
+    # for keyword in keywords:
+    #     for search_engine in search_engines:
+    #         for page in range(1, num_pages + 1):
+    #             yield {
+    #                 'query': keyword,
+    #                 'search_engine': search_engine,
+    #                 'scrape_method': scrape_method,
+    #                 'page_number': page
+    #             }
+
     for keyword in keywords:
         for search_engine in search_engines:
-            for page in range(1, num_pages + 1):
-                yield {
-                    'query': keyword,
-                    'search_engine': search_engine,
-                    'scrape_method': scrape_method,
-                    'page_number': page
-                }
+            if config.get('{}_search_url'.format(search_engine), None):
+                for page in range(1, num_pages + 1):
+                    yield {
+                        'query': keyword,
+                        'search_engine': search_engine,
+                        'scrape_method': scrape_method,
+                        'page_number': page,
+
+                        # ADDED ON 20241018
+                        'search_domain': config['{}_search_url'.format(search_engine)]
+                    }
+            elif config.get('{}_search_urls'.format(search_engine), None):
+                # ADDED AND MODIFIED ON 20241021
+                for search_domain in config['{}_search_urls'.format(search_engine)]:
+                    for page in range(1, num_pages + 1):
+                        yield {
+                            'query': keyword,
+                            'search_engine': search_engine,
+                            'scrape_method': scrape_method,
+                            'page_number': page,
+
+                            # ADDED ON 20241021
+                            'search_domain': search_domain
+                        }
+            else:
+                # ADDED AND MODIFIED ON 20241021
+                for page in range(1, num_pages + 1):
+                    yield {
+                        'query': keyword,
+                        'search_engine': search_engine,
+                        'scrape_method': scrape_method,
+                        'page_number': page,
+
+                        # ADDED ON 20241021
+                        'search_domain': 'https://www.{}.com'.format(search_engine)
+                    }
