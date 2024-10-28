@@ -160,7 +160,7 @@ class CacheManager():
                         os.remove(os.path.join(cachedir, fname))
 
 
-    def cached_file_name(self, keyword, search_engine, scrape_mode, page_number):
+    def cached_file_name(self, keyword, search_engine, scrape_mode, page_number, search_domain=None):
         """Make a unique file name from the search engine search request.
 
         Important! The order of the sequence is darn important! If search queries have the same
@@ -181,7 +181,10 @@ class CacheManager():
         assert isinstance(scrape_mode, str), 'Scrapemode {} needs to be a string'.format(scrape_mode)
         assert isinstance(page_number, int), 'Page_number {} needs to be an int'.format(page_number)
 
-        unique = [keyword, search_engine, scrape_mode, page_number]
+        # ADDED ON 20241018
+        assert isinstance(search_domain, str), 'Search_domain {} needs to be an str'.format(search_domain)
+
+        unique = [keyword, search_engine, scrape_mode, page_number, search_domain]
 
         sha = hashlib.sha256()
         sha.update(b''.join(str(s).encode() for s in unique))
@@ -297,7 +300,7 @@ class CacheManager():
             else:
                 html = parser.html
 
-            fname = self.cached_file_name(query, search_engine, scrape_mode, page_number)
+            fname = self.cached_file_name(query, search_engine, scrape_mode, page_number, search_domain)
             cachedir = self.config.get('cachedir', '.scrapecache')
             path = os.path.join(cachedir, fname)
 
@@ -379,7 +382,10 @@ class CacheManager():
                 job['query'],
                 job['search_engine'],
                 job['scrape_method'],
-                job['page_number']
+                job['page_number'],
+                
+                # ADDED ON 20241018
+                job['search_domain']
             )
             mapping[cache_name] = job
             num_total += 1
@@ -399,12 +405,12 @@ class CacheManager():
                 # search mode that fits our description. Let's see if there is already
                 # an record in the database and link it to our new ScraperSearch object.
                 serp = self.get_serp_from_database(session, job['query'], job['search_engine'], job['scrape_method'],
-                                              job['page_number'])
+                                              job['page_number'], job['search_domain'])
 
                 # if no serp was found or the serp has no results
                 # parse again
                 if not serp or (serp and len(serp.links) <= 0):
-                    serp = self.parse_again(fname, job['search_engine'], job['scrape_method'], job['query'])
+                    serp = self.parse_again(fname, job['search_engine'], job['scrape_method'], job['query'], job['search_domain'])
 
                 serp.scraper_searches.append(scraper_search)
                 session.add(serp)
@@ -426,7 +432,7 @@ class CacheManager():
         return scrape_jobs
 
 
-    def parse_again(self, fname, search_engine, scrape_method, query):
+    def parse_again(self, fname, search_engine, scrape_method, query, search_domain=None):
         """
         @todo: `scrape_method` is not used here -> check if scrape_method is passed to this function and remove it
         """
@@ -436,17 +442,21 @@ class CacheManager():
             self.config,
             html=html,
             search_engine=search_engine,
-            query=query
+            query=query,
+            
+            # ADD ON 20241028
+            search_domain=search_domain
         )
 
 
-    def get_serp_from_database(self, session, query, search_engine, scrape_method, page_number):
+    def get_serp_from_database(self, session, query, search_engine, scrape_method, page_number, search_domain):
         try:
             serp = session.query(SearchEngineResultsPage).filter(
                 SearchEngineResultsPage.query == query,
                 SearchEngineResultsPage.search_engine_name == search_engine,
                 SearchEngineResultsPage.scrape_method == scrape_method,
-                SearchEngineResultsPage.page_number == page_number).first()
+                SearchEngineResultsPage.page_number == page_number,
+                SearchEngineResultsPage.search_domain == search_domain).first()
             return serp
         except NoResultFound:
             # that shouldn't happen
