@@ -165,6 +165,29 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         'ebay': {}
     }
 
+    error_request_needles = {
+        # ADD ON 20241026
+        'google': {},
+        'bing': {},
+        'yahoo': {},
+        'baidu': {},
+        'yandex': {},
+        'ask': {},
+        'blekko': {},
+        'duckduckgo': {},
+
+        # Added on 20240930
+        'amazon': {
+            'inhtml': "An error occurred when we tried to process your request.",
+            'inhtmlCN': '处理您的请求时发生错误',
+            'inhtmlFR': "Une erreur s'est produite lorsque nous avons essayé de traiter votre demande.",
+            'inhtmlIT': "Si è verificato un errore quando abbiamo tentato di elaborare la richiesta.",
+            'inhtmlDE': "Während wir Ihre Eingabe ausführen wollten, ist ein technischer Fehler aufgetreten.",
+            'inhtmlJP': "リクエストを処理しようとしたときにエラーが発生しました。",
+        },
+        'ebay': {}
+    }
+
     def __init__(self, config, cache_manager=None, jobs=None, scraper_search=None, session=None, db_lock=None, cache_lock=None,
                  start_page_pos=1, search_engine=None, search_type=None, proxy=None, progress_queue=None):
         """Instantiate an SearchEngineScrape object.
@@ -303,7 +326,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         """
         self.status = 'Malicious request detected: {}'.format(status_code)
 
-    def store(self, webdriver):
+    def store(self, webdriver, search_engine, search_domain):
         """Store the parsed data in the sqlalchemy scoped session."""
         assert self.session, 'No database session.'
 
@@ -314,7 +337,10 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
 
         with self.db_lock:
 
-            serp = parse_serp(self.config, webdriver, parser=self.parser, scraper=self, query=self.query)
+            # MODIFIED ON 20241028
+            serp = parse_serp(self.config, webdriver, parser=self.parser, 
+                              scraper=self, search_engine=search_engine, 
+                              query=self.query, search_domain=search_domain)
 
             self.scraper_search.serps.append(serp)
             self.session.add(serp)
@@ -352,10 +378,11 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
             len(self.jobs),
             self.pages_per_keyword))
 
-    def cache_results(self):
+    def cache_results(self, search_domain=None):
         """Caches the html for the current request."""
-        self.cache_manager.cache_results(self.parser, self.query, self.search_engine_name, self.scrape_method, self.page_number,
-                      db_lock=self.db_lock)
+        self.cache_manager.cache_results(self.parser, self.query, self.search_engine_name, 
+                                         self.scrape_method, self.page_number,
+                                         db_lock=self.db_lock, search_domain=search_domain)
 
     def _create_random_sleeping_intervals(self, number_of_searches):
         """Sleep a given amount of time as a function of the number of searches done.
@@ -403,20 +430,20 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                 pass
 
 
-    def after_search(self, webdriver):
+    def after_search(self, webdriver, search_engine=None, search_domain=None):
         """Store the results and parse em.
 
         Notify the progress queue if necessary.
         """
         self.search_number += 1
 
-        if not self.store(webdriver):
+        if not self.store(webdriver, search_engine, search_domain):
             logger.debug('No results to store for keyword: "{}" in search engine: {}'.format(self.query,
                                                                                     self.search_engine_name))
 
         if self.progress_queue:
             self.progress_queue.put(1)
-        self.cache_results()
+        self.cache_results(search_domain)
 
     def before_search(self):
         """Things that need to happen before entering the search loop."""
@@ -473,6 +500,9 @@ class ScrapeWorkerFactory():
 
         self.jobs = dict()
 
+        # ADDED ON 20241021
+        self.search_domain = ''
+
     def is_suitabe(self, job):
 
         return job['scrape_method'] == self.mode and job['search_engine'] == self.search_engine
@@ -481,11 +511,26 @@ class ScrapeWorkerFactory():
 
         query = job['query']
         page_number = job['page_number']
+        
+        # ADD ON 20241022
+        # search_domain = urlparse(job['search_domain']).netloc
+        search_domain = job['search_domain']
 
-        if query not in self.jobs:
-            self.jobs[query] = []
+        # ADD ON 20241022
+        if search_domain not in self.jobs:
+            self.jobs[search_domain] = {}
 
-        self.jobs[query].append(page_number)
+        # ADD ON 20241022
+        if query not in self.jobs[search_domain].keys():
+            self.jobs[search_domain][query] = []
+
+        # ADD ON 20241022
+        self.jobs[search_domain][query].append(page_number)
+
+        # if query not in self.jobs:
+        #     self.jobs[query] = []
+
+        # self.jobs[query].append(page_number)
 
     def get_worker(self):
 
