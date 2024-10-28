@@ -283,7 +283,7 @@ def main(return_results=False, parse_cmd_line=True, config_from_dict=None):
                 keywords = list(dict.fromkeys(keywords))
 
     if not scrape_jobs:
-        scrape_jobs = default_scrape_jobs_for_keywords(keywords, search_engines, scrape_method, pages)
+        scrape_jobs = default_scrape_jobs_for_keywords(keywords, search_engines, scrape_method, pages, config)
 
     scrape_jobs = list(scrape_jobs)
 
