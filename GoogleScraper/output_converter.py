@@ -7,6 +7,9 @@ import pprint
 import logging
 from GoogleScraper.database import Link, SERP
 
+# 20241012添加
+import os
+
 """Stores SERP results in the appropriate output format.
 
 Streamline process, one serp object at the time, because GoogleScraper works incrementally.
@@ -57,9 +60,11 @@ class CsvStreamWriter():
         # self.file = open(filename, 'wt', encoding='utf-8', newline='')
         # 20241012修改添加
         if os.path.exists(filename):
+            print(f"{filename}已存在")
             self.file = open(filename, 'a', encoding='utf-8', newline='')
             self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
         else:
+            print(f"{filename}不存在，新建{filename}")
             self.file = open(filename, 'wt', encoding='utf-8', newline='')            
             self.dict_writer = csv.DictWriter(self.file, fieldnames=csv_fieldnames, delimiter=',')
             self.dict_writer.writeheader()
