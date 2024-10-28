@@ -273,7 +273,7 @@ class CacheManager():
                 raise InvalidConfigurationFileException('"{}" is a invalid configuration file.'.format(path))
 
 
-    def cache_results(self, parser, query, search_engine, scrape_mode, page_number, db_lock=None):
+    def cache_results(self, parser, query, search_engine, scrape_mode, page_number, db_lock=None, search_domain=None):
         """Stores the html of an parser in a file.
 
         The file name is determined by the parameters query, search_engine, scrape_mode and page_number.
@@ -410,7 +410,8 @@ class CacheManager():
                 # if no serp was found or the serp has no results
                 # parse again
                 if not serp or (serp and len(serp.links) <= 0):
-                    serp = self.parse_again(fname, job['search_engine'], job['scrape_method'], job['query'], job['search_domain'])
+                    serp = self.parse_again(fname, job['search_engine'], job['scrape_method'], 
+                                            job['query'], job['search_domain'])
 
                 serp.scraper_searches.append(scraper_search)
                 session.add(serp)
@@ -456,7 +457,8 @@ class CacheManager():
                 SearchEngineResultsPage.search_engine_name == search_engine,
                 SearchEngineResultsPage.scrape_method == scrape_method,
                 SearchEngineResultsPage.page_number == page_number,
-                SearchEngineResultsPage.search_domain == search_domain).first()
+                SearchEngineResultsPage.search_domain == search_domain
+            ).first()
             return serp
         except NoResultFound:
             # that shouldn't happen
