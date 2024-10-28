@@ -45,6 +45,9 @@ class ScraperSearch(Base):
     started_searching = Column(DateTime, default=datetime.datetime.utcnow)
     stopped_searching = Column(DateTime)
 
+    #ADD ON 20241019
+    used_search_domain = Column(String)
+
     serps = relationship(
         'SearchEngineResultsPage',
         secondary=scraper_searches_serps,
@@ -69,6 +72,9 @@ class SearchEngineResultsPage(Base):
     page_number = Column(Integer)
     requested_at = Column(DateTime, default=datetime.datetime.utcnow)
     requested_by = Column(String, default='127.0.0.1')
+
+    # ADDED ON 20241018
+    search_domain = Column(String)
 
     # The string in the SERP that indicates how many results we got for the search term.
     num_results_for_query = Column(String, default='')
@@ -106,7 +112,7 @@ class SearchEngineResultsPage(Base):
         """
         return self.num_results == 0 or self.effective_query
 
-    def set_values_from_parser(self, parser, webdriver):
+    def set_values_from_parser(self, parser, webdriver, search_engine, search_domain):
         """Populate itself from a parser object.
 
         Args:
@@ -127,9 +133,9 @@ class SearchEngineResultsPage(Base):
                     if not parsed:
                         match parser.search_engine:
                             case 'amazon' | 'ebay':
-                                parsed = urlparse(webdriver.current_url)
+                                parsed = urlparse(search_domain)
                             case _:
-                                print(f"parser.search_engine未定义，默认用google.com")
+                                print(f"parser.search_engine:{search_engine}未定义，默认用google.com")
                                 parsed = urlparse('https://www.google.com')
 
                     # fill with nones to prevent key errors
