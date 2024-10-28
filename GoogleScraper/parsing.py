@@ -464,16 +464,21 @@ class GoogleParser(Parser):
     image_search_selectors = {
         'results': {
             'de_ip': {
-                'container': '#res',
-                'result_container': '.rg_bx',
-                'link': 'a.rg_l::attr(href)',
-                'snippet': '.a-no-hover-decoration::text',
+                'container': 'li#isr_mc',
+                'result_container': 'div.rg_di',
+                'link': 'a.rg_l::attr(href)'
             },
             'cn_ip': {
                 # 于20240910添加
                 'container': 'div.wIjY0d',
                 'result_container': 'div.wIjY0d div.eA0Zlc',
                 'link': 'div.wIjY0d div.eA0Zlc a.EZAeBe::attr(href)'
+            },
+            'de_ip_raw': {
+                'container': '.images_table',
+                'result_container': 'tr td',
+                'link': 'a::attr(href)',
+                'visible_link': 'cite::text',
             },
             'de_ip_http_mode': {
                 'container': '#search',
@@ -708,6 +713,13 @@ class BingParser(Parser):
         },
         'ads_main': {
             'us_ip': {
+                # Sam.Z于20240911添加并根据具体网站模板修改，原内容如下
+                # 'container': '#b_results .b_ad',
+                # 'result_container': '.sb_add',
+                # 'link': 'h2 > a::attr(href)',
+                # 'snippet': '.sb_addesc::text',
+                # 'title': 'h2 > a::text',
+                # 'visible_link': 'cite::text'
                 'container': '#b_results .b_ad',
                 'result_container': '.sb_add',
                 'link': 'h2 > a::attr(href)',
