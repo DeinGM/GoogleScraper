@@ -1539,7 +1539,7 @@ def get_parser_by_search_engine(search_engine):
         raise NoParserForSearchEngineException('No such parser for "{}"'.format(search_engine))
 
 
-def parse_serp(config, webdriver, html=None, parser=None, scraper=None, search_engine=None, query=''):
+def parse_serp(config, webdriver, html=None, parser=None, scraper=None, search_engine=None, query='', search_domain=None):
     """Store the parsed data in the sqlalchemy session.
 
     If no parser is supplied then we are expected to parse again with
@@ -1566,7 +1566,7 @@ def parse_serp(config, webdriver, html=None, parser=None, scraper=None, search_e
         serp.query = query
 
     if parser:
-        serp.set_values_from_parser(parser, webdriver)
+        serp.set_values_from_parser(parser, webdriver, search_engine, search_domain)
     if scraper:
         serp.set_values_from_scraper(scraper)
 
