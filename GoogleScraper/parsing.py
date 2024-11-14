@@ -1038,13 +1038,14 @@ class DuckduckgoParser(Parser):
 
     normal_search_selectors = {
         'results': {
-            'de_ip': {
-                'container': '#links',
-                'result_container': '.result',
-                'link': '.result__title > a::attr(href)',
-                'snippet': 'result__snippet::text',
-                'title': '.result__title > a::text',
-                'visible_link': '.result__url__domain::text'
+            # 20241114
+            'us_ip': {
+                'container': '.react-results--main',
+                'result_container': '.yQDlj3B5DI5YO8c8Ulio',
+                'link': '.LnpumSThxEWMIsDdAT17 > a::attr(href)',
+                'snippet': '.E2eLOJr8HctVnDOTM8fs .kY2IgmnCmOGjharHErah::text',
+                'title': '.LnpumSThxEWMIsDdAT17 > a::text',
+                'visible_link': '.Rn_JXVtoPVAFyGkcaXyK::text'
             },
             'cn_ip': {
                 # 于20240912添加修改
@@ -1064,6 +1065,17 @@ class DuckduckgoParser(Parser):
                 'visible_link': '.url::text'
             },
         },
+        'ads_main': {
+            'us_ip': {
+                # Sam.Z于20241114添加
+                'container': '.react-results--main',
+                'result_container': '.RVYGO5611IX7wODnZlrT',
+                'link': '.LnpumSThxEWMIsDdAT17 > a::attr(href)',
+                'snippet': '.OgdwYG6KE2qthn9XQWFC::text',
+                'title': '.LnpumSThxEWMIsDdAT17 > a::text',
+                'visible_link': '.Rn_JXVtoPVAFyGkcaXyK::text'
+            },
+        },
     }
     
     image_search_selectors = {
@@ -1073,6 +1085,97 @@ class DuckduckgoParser(Parser):
                 'container': '.zci__main',
                 'result_container': '.tile--img > .tile--img__media',
                 'link': '.tile--img > a::attr(href)'
+            },
+        }
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def after_parsing(self):
+        super().after_parsing()
+
+        if self.searchtype == 'normal':
+
+            try:
+                if 'No more results.' in self.dom.xpath(self.css_to_xpath('.no-results'))[0].text_content():
+                    self.no_results = True
+            except:
+                pass
+
+            if self.num_results > 0:
+                self.no_results = False
+            elif self.num_results <= 0:
+                self.no_results = True
+
+
+class QwantParser(Parser):
+    # 20241114
+    """Parses SERP pages of the Qwant search engine."""
+
+    search_engine = 'qwant'
+
+    # 20241114添加
+    list_of_domains = {}
+
+    search_types = ['normal', 'image']
+
+    num_results_search_selectors = []
+
+    no_results_selector = []
+
+    effective_query_selector = ['']
+
+    # duckduckgo is loads next pages with ajax
+    page_number_selectors = ['']
+
+    normal_search_selectors = {
+        'results': {
+            # 20241114
+            'us_ip': {
+                'container': '._3oWq7',
+                'result_container': "[data-testid='sectionWeb'] ._20m9B",
+                'link': '.Y_JwQ > a::attr(href)',
+                'snippet': 'div._3t5cn::text',
+                'title': '.Y_JwQ > a::text',
+                'visible_link': '[data-testid="breadcrumbs"] a::text'
+            },
+            'non_javascript_mode': {
+                'container': '#content',
+                'result_container': '.results_links',
+                'link': '.links_main > a::attr(href)',
+                'snippet': '.snippet::text',
+                'title': '.links_main > a::text',
+                'visible_link': '.url::text'
+            },
+        },
+        'ads_main': {
+            'us_ip': {
+                # Sam.Z于20241114添加
+                'container': '._3oWq7',
+                'result_container': "[data-testid='adResult']",
+                'link': 'Y_JwQ a::attr(href)',
+                'snippet': '.Y_JwQ div._1vHtc::text',
+                'title': '.Y_JwQ a::text',
+                'visible_link': '[data-testid="breadcrumbs"] a::text'
+            },
+        },
+        # those css selectors are probably not worth much
+        'maps_local': {
+
+        },
+        'ads_aside': {
+
+        }
+    }
+
+    image_search_selectors = {
+        # Sam.Z于20241114添加修改
+        'results': {
+            'cn_ip': {
+                'container': '.KhooK',
+                'result_container': '.B9KaV',
+                'link': 'a[data-testid="imageResult"]::attr(href)'
             },
         }
     }
@@ -1507,6 +1610,9 @@ def get_parser_by_url(url):
         parser = AmazonParser
     elif re.search(r'^http[s]?://www\.ebay', url):
         parser = eBayParser
+    # 20241114
+    elif re.search(r'^http[s]?://www\.qwant', url):
+        return QwantParser
     if not parser:
         raise UnknowUrlException('No parser for {}.'.format(url))
 
@@ -1546,7 +1652,10 @@ def get_parser_by_search_engine(search_engine):
     elif search_engine == 'amazon':
         return AmazonParser
     elif search_engine == 'ebay':
-        return ebayParser
+        return eBayParser
+    # 20241114
+    elif search_engine == 'qwant':
+        return QwantParser
     else:
         raise NoParserForSearchEngineException('No such parser for "{}"'.format(search_engine))
 
