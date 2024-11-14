@@ -430,7 +430,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                 pass
 
 
-    def after_search(self, webdriver, search_engine=None, search_domain=None):
+    def after_search(self, webdriver=None, search_engine=None, search_domain=None):
         """Store the results and parse em.
 
         Notify the progress queue if necessary.
