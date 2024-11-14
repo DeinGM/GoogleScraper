@@ -142,6 +142,15 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         # Added on 20240927
         'amazon': '.s-pagination-next',
         'ebay': '.su-pagination a',
+
+        # Added on 20241114
+        'quant': ''
+    }
+
+    more_button_xpath = {
+        # Added by Sam on 20241113
+        'duckduckgo' : "//button[@id='more-results']",
+        'qwant': "//button[@data-testid='buttonShowMore']",
     }
 
     input_field_selectors = {
@@ -160,6 +169,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         # Added on 20240927
         'amazon': (By.NAME, 'site-search'),
         'ebay': (By.NAME, '_nkw'),
+
+        # Added on 20241114
+        'quant': (By.NAME, 'q'),
     }
 
     param_field_selectors = {
@@ -195,6 +207,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         # Added on 20240927
         'amazon': 'https://www.amazon.com',
         'ebay': 'https://www.ebay.com',
+
+        # Added on 20241114
+        'quant': 'https://www.qwant.com'
     }
 
     image_search_locations = {
@@ -212,6 +227,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         # Added on 20240927
         'amazon': 'https://www.amazon.com',
         'ebay': 'https://www.ebay.com',
+
+        # Added on 20241114
+        'quant': 'https://www.qwant.com/?t=images'
     }
 
     def __init__(self, config, *args, captcha_lock=None, browser_num=1, **kwargs):
@@ -702,6 +720,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
             if self.search_engine_name == 'duckduckgo':
                 time.sleep(1.5)
+
+            if self.search_engine_name == 'quant':
+                # ADDED ON 20241114
+                time.sleep(1.5)
             else:
 
                 try:
@@ -881,6 +903,16 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         '''
 
         self.webdriver.execute_script(js)
+
+    def click_more_button(self):
+        # ADDED ON 20241113
+        """Scrolls down a page with javascript.
+
+        Used for next page in image search mode or when the
+        next results are obtained by clicking more buttons.
+        """
+
+        self.webdriver.find_element(By.XPATH, f"{self.more_button_xpath[self.search_engine_name]}").click()
 
     def run(self):
         """Run the SelScraper."""
@@ -1063,7 +1095,9 @@ class DuckduckgoSelScrape(SelScrape):
         self.largest_id = 0
 
     def _goto_next_page(self):
-        super().page_down()
+        # super().page_down()
+        # MODIFIED ON 20241113
+        super().click_more_button()
         return 'No more results' not in self.html
 
     def wait_until_serp_loaded(self):
@@ -1072,7 +1106,6 @@ class DuckduckgoSelScrape(SelScrape):
     def run(self):
         # Added by Sam.Z on 20240906
         pass
-
 
 class BlekkoSelScrape(SelScrape):
     def __init__(self, *args, **kwargs):
@@ -1084,7 +1117,6 @@ class BlekkoSelScrape(SelScrape):
     def run(self):
         # Added by Sam.Z on 20240906
         pass
-
 
 class AskSelScrape(SelScrape):
     def __init__(self, *args, **kwargs):
@@ -1105,7 +1137,6 @@ class AskSelScrape(SelScrape):
         # Added by Sam.Z on 20240906
         pass
 
-
 class AmazonScrape(SelScrape):
     # Added by Sam on 20240927
 
@@ -1113,15 +1144,25 @@ class AmazonScrape(SelScrape):
         SelScrape.__init__(self, *args, **kwargs)
         self.largest_id = 0
 
-
-class eBayScrape(SelScrape):
+class EbayScrape(SelScrape):
     # Added by Sam on 20240927
 
     def __init__(self, *args, **kwargs):
         SelScrape.__init__(self, *args, **kwargs)
 
+class QwantScrape(SelScrape):
+    # Added by Sam on 20241113
 
-class WooCommerceScrape(SelScrape):
+    def __init__(self, *args, **kwargs):
+        SelScrape.__init__(self, *args, **kwargs)
+
+    def _goto_next_page(self):
+        # super().page_down()
+        # MODIFIED ON 20241113
+        super().click_more_button()
+        return 'No more results' not in self.html
+
+class WoocommerceScrape(SelScrape):
     # Added by Sam on 20240927
 
     def __init__(self, *args, **kwargs):
