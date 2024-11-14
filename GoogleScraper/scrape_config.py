@@ -94,7 +94,7 @@ google_ip_file = ''
 # List of supported search engines
 # If you add support for another search engine (of course implement it in the
 # appropriate places) add it in this list.
-supported_search_engines = ['google', 'yandex', 'bing', 'yahoo', 'baidu', 'duckduckgo', 'ask']
+supported_search_engines = ['google', 'yandex', 'bing', 'yahoo', 'baidu', 'duckduckgo', 'ask', 'qwant', 'amazon', 'ebay']
 
 # The search engine(s) to use. For the supported search engines, see above "supported_search_engines"
 search_engines = ['google', ]
@@ -104,6 +104,10 @@ search_engines = ['google', ]
 
 # The google base search url
 google_search_url = 'https://www.google.com/search?'
+
+# ADDED ON 20241021
+google_search_urls = ['https://www.google.com', 'https://www.google.de', 'https://www.google.fr',
+                      'https://www.google.co.uk', 'https://www.google.com.hk', 'https://www.google.es']
 
 # whether to change the search settings prior to scraping
 # when this is set to False google will search with
@@ -124,38 +128,82 @@ google_selenium_num_results = 100
 # Private results help find more relevant content for you, including content and connections that only you can see.
 google_selenium_personalization = False
 # use a country code such as US, DE, GB, CH, ...
-google_selenium_region = 'DE'
+google_selenium_region = 'CN'
 google_selenium_safe_search = False
 # the language for google search results
 google_selenium_language = 'English'
 
 
 # The yandex base search url
-yandex_search_url = 'http://yandex.ru/yandsearch?'
+yandex_search_url = 'https://yandex.ru/yandsearch?'
+
+# ADDED ON 20241021
+yandex_search_urls = ['https://yandex.ru']
 
 # The bing base search url
-bing_search_url = 'http://www.bing.com/search?'
+bing_search_url = 'https://www.bing.com/search?'
+
+# ADDED ON 20241021
+bing_search_urls = ['https://www.bing.com']
 
 # The yahoo base search url
 yahoo_search_url = 'https://de.search.yahoo.com/search?'
 
+# ADDED ON 20241021
+yahoo_search_urls = ['https://de.search.yahoo.com']
+
 # The baidu base search url
-baidu_search_url = 'http://www.baidu.com/s?'
+baidu_search_url = 'https://www.baidu.com/s?'
+
+# ADDED ON 20241021
+baidu_search_urls = ['https://www.baidu.com']
 
 # The duckduckgo base search url
 duckduckgo_search_url = 'https://duckduckgo.com/'
 
+# ADDED ON 20241021
+duckduckgo_search_urls = ['https://duckduckgo.com']
+
 # duckduckgo url for http mode
 http_duckduckgo_search_url = 'https://duckduckgo.com/html/?'
 
+# ADDED ON 20241021
+http_duckduckgo_search_urls = ['https://duckduckgo.com/html/?']
+
 # The ask base search url
-ask_search_url = 'http://de.ask.com/web?'
+ask_search_url = 'https://de.ask.com/web?'
+
+# ADDED ON 20241021
+ask_search_urls = ['https://de.ask.com']
 
 # The Amazon base search url, added on 20240930
 amazon_search_url = 'https://www.amazon.com/s?'
+amazon_search_ca_url = 'https://www.amazon.ca/s?'
+amazon_search_uk_url = 'https://www.amazon.co.uk/s?'
+amazon_search_de_url = 'https://www.amazon.de/s?'
+amazon_search_it_url = 'https://www.amazon.it/s?'
+amazon_search_fr_url = 'https://www.amazon.fr/s?'
+amazon_search_jp_url = 'https://www.amazon.co.jp/s?'
+
+# ADDED ON 20241021
+amazon_search_urls = ['https://www.amazon.com', 'https://www.amazon.ca', 'https://www.amazon.co.uk',
+                      'https://www.amazon.de', 'https://www.amazon.it', 'https://www.amazon.fr',
+                      'https://www.amazon.co.jp', ]
 
 # The eBay base search url, added on 20240930
 ebay_search_url = 'https://www.ebay.com/sch/i.html?'
+ebay_search_cn_url = 'https://www.ebay.cn/sch/i.html?'
+ebay_search_ch_url = 'https://www.ebay.ch/sch/i.html?'
+ebay_search_ca_url = 'https://www.ebay.ca/sch/i.html?'
+ebay_search_uk_url = 'https://www.ebay.co.uk/sch/i.html?'
+ebay_search_de_url = 'https://www.ebay.de/sch/i.html?'
+ebay_search_it_url = 'https://www.ebay.it/sch/i.html?'
+ebay_search_fr_url = 'https://www.ebay.fr/sch/i.html?'
+ebay_search_jp_url = 'https://www.ebay.co.jp/sch/i.html?'
+
+# ADDED ON 20241021
+ebay_search_urls = ['https://www.ebay.com', 'https://www.ebay.cn', 'https://www.ebay.ch', 'https://www.ebay.ca',
+                    'https://www.ebay.co.uk', 'https://www.ebay.de', 'https://www.ebay.it', 'https://www.ebay.fr', ]
 
 # The search type. Currently, the following search modes are
 # supported for some search engine=  normal, video, news and image search.
