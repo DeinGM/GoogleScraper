@@ -133,6 +133,8 @@ google_selenium_safe_search = False
 # the language for google search results
 google_selenium_language = 'English'
 
+# The qwant base search url
+qwant_search_url = 'https://www.qwant.com/?t=web&q='
 
 # The yandex base search url
 yandex_search_url = 'https://yandex.ru/yandsearch?'
