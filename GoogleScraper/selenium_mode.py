@@ -141,7 +141,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         
         # Added on 20240927
         'amazon': '.s-pagination-next',
-        'ebay': '.su-pagination a',
+        'ebay': '.su-pagination a.pagination__next',
 
         # Added on 20241114
         'quant': ''
