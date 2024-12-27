@@ -162,7 +162,16 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
             'inhtmlIT': "per capire se l'utente è un robot.",
             'inhtmlDE': "Sie kein Bot sind.",
         },
-        'ebay': {}
+        'ebay': {
+            'inurl': '/errors/validateCaptcha?',
+            'inhtml': "make sure you're not a robot.",
+            'inhtmlCN': '您访问的页面不存在，请确认访问地址是否正确',
+            'inhtmlFR': "que vous n'êtes pas un robot.",
+            'inhtmlIT': "per capire se l'utente è un robot.",
+            'inhtmlDE': "Sie kein Bot sind.",
+            'inhtmlJP': "お探しのペ-ジは見つかりませんでした。",
+            
+        }
     }
 
     error_request_needles = {
@@ -185,7 +194,14 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
             'inhtmlDE': "Während wir Ihre Eingabe ausführen wollten, ist ein technischer Fehler aufgetreten.",
             'inhtmlJP': "リクエストを処理しようとしたときにエラーが発生しました。",
         },
-        'ebay': {}
+        'ebay': {
+            'inhtml': "An error occurred when we tried to process your request.",
+            'inhtmlCN': '处理您的请求时发生错误',
+            'inhtmlFR': "Une erreur s'est produite lorsque nous avons essayé de traiter votre demande.",
+            'inhtmlIT': "Si è verificato un errore quando abbiamo tentato di elaborare la richiesta.",
+            'inhtmlDE': "Während wir Ihre Eingabe ausführen wollten, ist ein technischer Fehler aufgetreten.",
+            'inhtmlJP': "お探しのペ-ジは見つかりませんでした。",
+        }
     }
 
     def __init__(self, config, cache_manager=None, jobs=None, scraper_search=None, session=None, db_lock=None, cache_lock=None,
