@@ -1302,7 +1302,7 @@ class eBayParser(Parser):
 
     search_types = ['normal', 'image']
 
-    effective_query_selector = ['div.srp-layout-inner']
+    effective_query_selector = ['h1.srp-controls__count-heading span.BOLD']
 
     no_results_selector = []
 
@@ -1419,7 +1419,7 @@ class AmazonParser(Parser):
 
     search_types = ['normal', 'image']
 
-    effective_query_selector = []
+    effective_query_selector = ['div.sg-col-inner h2.a-spacing-small span']
 
     no_results_selector = []
 
