@@ -1429,23 +1429,23 @@ class AmazonParser(Parser):
 
     normal_search_selectors = {
         'results': {
-            'de_ip': {
+            'uk_ip/ca_ip/de_ip/it_ip/fr_ip': {
                 'container': 'div.s-main-slot',
                 'result_container': 'div.puis-card-container',
-                'link': 'h2 > a.a-text-normal::attr(href)',
-                'snippet': 'h2 > span.a-text-normal::text',
-                'title': 'h2 > span.a-text-normal::text',
-                'rating': 'div.a-spacing-top-micro div.a-size-small span.a-icon-alt::text',
-                'price': 'a.s-underline-link-text > span.a-price span.a-offscreen::text'
+                'link': 'a[class="a-link-normal s-line-clamp-4 s-link-style a-text-normal"]::attr(href)',
+                'snippet': 'h2 span::text',
+                'title': 'h2 span::text',
+                'rating': 'span.a-icon-alt::text',
+                'price': 'span[data-a-color="base"] span.a-offscreen::text'
             },
-            'us_ip': {
+            'jp_ip': {
                 'container': 'div.s-main-slot',
                 'result_container': 'div.puis-card-container',
-                'link': 'h2 > a.a-text-normal::attr(href)',
-                'snippet': 'h2 span.a-text-normal::text',
-                'title': 'h2 span.a-text-normal::text',
-                'rating': 'div.a-spacing-top-micro div.a-size-small span.a-icon-alt::text',
-                'price': 'a.s-underline-link-text > span.a-price span.a-offscreen::text'
+                'link': 'a[class="a-link-normal s-line-clamp-4 s-link-style a-text-normal"]::attr(href)',
+                'snippet': 'h2 span::text',
+                'title': 'h2 span::text',
+                'rating': 'span.a-icon-alt::text',
+                'price': 'span[class="a-price"] span.a-offscreen::text'
             },
             'cn_ip': {
                 'container': '',
