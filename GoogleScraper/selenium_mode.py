@@ -877,7 +877,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     if refuse_btn:
                         refuse_btn[0].click()                
 
-                self.requested_at = datetime.datetime.utcnow()
+                self.requested_at = datetime.datetime.now()
             else:
                 logger.debug('{}: Cannot get handle to the input form for keyword {}.'.format(self.name, self.query))
                 continue
@@ -900,7 +900,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 # in the next iteration.
                 if self.page_number in self.pages_per_keyword:
                     next_url = self._goto_next_page()
-                    self.requested_at = datetime.datetime.utcnow()
+                    self.requested_at = datetime.datetime.now()
 
                     if not next_url:
                         break
