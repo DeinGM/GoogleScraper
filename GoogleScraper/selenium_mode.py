@@ -144,13 +144,27 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ebay': '.su-pagination a.pagination__next',
 
         # Added on 20241114
-        'quant': ''
+        'qwant': ''
     }
 
     more_button_xpath = {
         # Added by Sam on 20241113
         'duckduckgo' : "//button[@id='more-results']",
         'qwant': "//button[@data-testid='buttonShowMore']",
+    }
+
+    pop_up_window_button = {
+        'amazon': 'button[id="sp-cc-rejectall-link"]',
+        'google': 'div[class="QS5gu sy4vM"]',
+        'ebay': 'button[id="gdpr-banner-decline"]',
+        'baidu': '',
+        'bing': 'button[id="bnp_btn_reject"]',
+        'yandex': '',
+        'duckduckgo': '',
+        'qwant': '',
+        'yahoo': '',
+        'ask': '',
+        'blekko': '',
     }
 
     input_field_selectors = {
@@ -171,7 +185,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ebay': (By.NAME, '_nkw'),
 
         # Added on 20241114
-        'quant': (By.NAME, 'q'),
+        'qwant': (By.NAME, 'q'),
     }
 
     param_field_selectors = {
@@ -209,7 +223,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ebay': 'https://www.ebay.com',
 
         # Added on 20241114
-        'quant': 'https://www.qwant.com'
+        'qwant': 'https://www.qwant.com'
     }
 
     image_search_locations = {
@@ -229,7 +243,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ebay': 'https://www.ebay.com',
 
         # Added on 20241114
-        'quant': 'https://www.qwant.com/?t=images'
+        'qwant': 'https://www.qwant.com/?t=images'
     }
 
     def __init__(self, config, *args, captcha_lock=None, browser_num=1, **kwargs):
@@ -858,6 +872,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 except ElementNotVisibleException:
                     time.sleep(2)
                     self.search_input.send_keys(self.query + Keys.ENTER)
+                finally:
+                    refuse_btn = self.webdriver.find_elements(By.CSS_SELECTOR, self.pop_up_window_button[self.search_engine_name])
+                    if refuse_btn:
+                        refuse_btn[0].click()                
 
                 self.requested_at = datetime.datetime.utcnow()
             else:
