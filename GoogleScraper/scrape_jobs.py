@@ -53,7 +53,7 @@ You can see such a example file in the examples/ directory.
 """
 
 
-def default_scrape_jobs_for_keywords(keywords, search_engines, scrape_method, num_pages):
+def default_scrape_jobs_for_keywords(keywords, search_engines, scrape_method, num_pages, config):
     """Get scrape jobs by keywords.
 
     If you just submit a keyword file, then it is assumed that every keyword
