@@ -151,7 +151,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         },
         'ask': {},
         'blekko': {},
-        'duckduckgo': {}
+        'duckduckgo': {},
 
         # Added on 20240930
         'amazon': {
