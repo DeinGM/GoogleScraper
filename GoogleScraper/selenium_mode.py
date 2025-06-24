@@ -35,6 +35,8 @@ except ImportError as ie:
 from GoogleScraper.scraping import SearchEngineScrape, SeleniumSearchError, get_base_search_url_by_search_engine, MaliciousRequestDetected
 from GoogleScraper.user_agents import random_user_agent
 import logging
+import shutil
+import ast
 
 
 logger = logging.getLogger(__name__)
@@ -395,7 +397,39 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             chrome_options.add_argument('--disable-gpu')
             chrome_options.add_argument('--no-sandbox')
             chrome_options.add_argument('--incognito')
+            # 以上选项打开了无痕模式
             chrome_options.add_argument('--disable-application-cache')
+
+            def get_the_chrome_user_data_dir():
+                import platform
+                system = platform.system()
+                match system.upper():
+                    case 'WINDOWS':
+                        if not os.environ.get('LOCALAPPDATA'):
+                            print(f"系统未找到环境变量LOCALAPPDATA，请先设置，程序退出。")
+                            exit()
+                        appdata_dir = os.path.join(os.environ.get('LOCALAPPDATA'), 'Google', 'Chrome', 'User Data')
+                        if os.path.exists(appdata_dir):
+                            return appdata_dir
+                        else:
+                            print(f"系统目录暂未安排谷歌浏览器（Chrome），请先安装程序。")
+                            exit()
+                    case 'LINUX':
+                        appdata_dir = os.path.join(os.environ.get('$CHROME_CONFIG_HOME'))
+                        if os.path.exists(appdata_dir):
+                            return appdata_dir
+                        else:
+                            print(f"系统目录暂未安排谷歌浏览器（Chrome），请先安装程序。")
+                            exit()
+                    case _:
+                        print(f"系统名称为:{system.upper()}，目录暂不支持，程序退出。")
+                        exit()
+
+            try:
+                chrome_options.add_argument(f'--user-data-dir={get_the_chrome_user_data_dir()}')
+            except Exception as e:
+                print(f"加载用户资料过程中出现异常:{e}")
+                exit()
 
 
             if self.browser_mode == 'headless':
@@ -407,9 +441,43 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     '--proxy-server={}://{}:{}'.format(self.proxy.proto, self.proxy.host, self.proxy.port))
 
             chromedriver_path = self.config.get('chromedriver_path')
-            chrome_install = ChromeDriverManager().install()
-            folder = os.path.dirname(chrome_install)
-            chromedriver_path = os.path.join(folder, "chromedriver.exe")
+
+            if not os.path.exists(chromedriver_path):
+                def update_config_ast(filepath, key, value):
+                    with open(filepath, "r") as f:
+                        original_content = f.read()
+                        tree = ast.parse(original_content)
+                    if not os.path.exists(filepath + "_original"):
+                        with open(filepath + "_original", 'w', encoding='utf-8') as f:
+                            f.write(original_content)
+                            print(f"已将原配置文件重新保存备份")
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.Assign) \
+                                and isinstance(node.targets[0], ast.Name) \
+                                and node.targets[0].id == key:
+                            node.value = ast.Constant(value)
+                            break
+                    with open(filepath, "w") as f:
+                        f.write(ast.unparse(tree))
+
+                def get_scrape_config_file():
+                    for file in os.listdir(os.getcwd()):
+                        if file.endswith('scrape_config.py'):
+                            # 如有多个文件，只返回第一个匹配的文件
+                            return file
+                    print(f"文件名带scrape_config.py的文件不存在，请重新配置文件，程序退出。")
+                    exit()
+
+                new_driver_path = os.path.join(os.path.join(os.getcwd(), 'ChromeDriver'), 'chromedriver.exe')
+                if not os.path.exists(new_driver_path):
+                    chrome_install = ChromeDriverManager().install()
+                    folder = os.path.dirname(chrome_install)
+                    os.makedirs('ChromeDriver', exist_ok=True)
+                    chromedriver_path = os.path.join(folder, "chromedriver.exe")
+                    chromedriver_path = shutil.copy(chromedriver_path, new_driver_path)
+                else:
+                    chromedriver_path = new_driver_path
+                update_config_ast(get_scrape_config_file(), 'chromedriver_path', chromedriver_path)
             self.webdriver = webdriver.Chrome(service=Service(chromedriver_path), options=chrome_options)
             return True
 
@@ -450,9 +518,72 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
                 profile.update_preferences()
 
-            firefox_install = GeckoDriverManager().install()
-            folder = os.path.dirname(firefox_install)
-            firefox_path = os.path.join(folder, "geckodriver.exe")
+            firefox_path = self.config.get('geckodriver_path')
+
+            if not os.path.exists(firefox_path):
+                def get_firefox_user_data_dir():
+                    import platform
+                    system = platform.system()
+                    match system.upper():
+                        case 'WINDOWS':
+                            appdata = os.environ.get('APPDATA')
+                            if appdata:
+                                if os.path.join(appdata, 'Mozilla', 'Firefox'):
+                                    return os.path.join(appdata, 'Mozilla', 'Firefox')
+                                else:
+                                    print(f"系统未安装火狐浏览器Firefox，请先安装程序，程序退出。")
+                                    exit()
+                            else:
+                                print(f"未找到环境变量APPDATA，请先设置变量APPDATA，程序退出。")
+                                exit()
+                            pass
+                        case 'LINUX':
+                            home = os.path.expanduser("~")
+                            if os.path.exists(os.path.join(home, '.mozilla', 'firefox')):
+                                return os.path.join(home, '.mozilla', 'firefox')
+                            else:
+                                print(f"系统未安装火狐浏览器Firefox，请先安装程序，程序退出。")
+                                exit()
+                        case _:
+                            print(f"目前暂不支持该系统，程序退出。")
+                            exit()
+
+                def get_scrape_config_file():
+                    for file in os.listdir():
+                        if file.endswith('scrape_config.py'):
+                            return file
+                    print(f"文件名带scrape_config.py的文件不存在，请重新配置文件，程序退出。")
+                    exit()
+
+                def update_config_file(file, key, value):
+                    with open(file, 'r') as f:
+                        original_content = f.read()
+                        tree = ast.parse(original_content)
+
+                    if not os.path.exists(file+"_original"):
+                        with open(file+"_original", 'w') as f:
+                            f.write(original_content)
+                            print(f"已将原有配置保存到{file}_original")
+
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.Assign) \
+                                and isinstance(node.targets[0], ast.Name) \
+                                and node.targets[0].id == key:
+                            node.value = ast.Constant(value)
+                            break
+                    with open(file, "w") as f:
+                        f.write(ast.unparse(tree))
+
+                new_path = os.path.join(os.path.join(os.getcwd(), 'FirefoxDriver'), 'geckodriver.exe')
+                if not os.path.exists(new_path):
+                    firefox_install = GeckoDriverManager().install()
+                    folder = os.path.dirname(firefox_install)
+                    firefox_path = os.path.join(folder, "geckodriver.exe")
+                    os.makedirs('FirefoxDriver', exist_ok=True)
+                    firefox_path = shutil.copy(firefox_path, new_path)
+                else:
+                    firefox_path = new_path
+                update_config_file(get_scrape_config_file(), 'geckodriver_path', firefox_path)
             
             # self.webdriver = webdriver.Firefox(firefox_binary=binary, firefox_options=options,
             #          executable_path=geckodriver_path, firefox_profile=profile)
@@ -509,6 +640,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             if self.config.get('manual_captcha_solving', False) and self.config.get('browser_mode') != 'headless':
                 with self.captcha_lock:
                     solution = input('Please solve the captcha in the browser! Enter any key when done...')
+                    # CHROME浏览器请到以下地址安装NopeCHA: CAPTCHA Solver验证码绕过插件
+                    # https://chromewebstore.google.com/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo?hl=zh-CN&utm_source=ext_sidebar
+                    # 也可以参考https://www.youtube.com/watch?v=BhDcsIpX5x8，安装capsolver模块
                     if urlparse(self.webdriver.current_url).path:
                         site_parser = urlparse(self.webdriver.current_url)
                         self.webdriver.get(site_parser.scheme + "://" + site_parser.netloc)
@@ -741,9 +875,8 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 # ADDED ON 20241114
                 time.sleep(1.5)
             else:
-
                 try:
-                    WebDriverWait(self.webdriver, 5).\
+                    WebDriverWait(self.webdriver, 15).\
             until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, selector), str(self.page_number)))
                     # print(f"page_number={self.page_number}, "
                     #       f"(By.CSS_SELECTOR, selector)={self.webdriver.find_element(By.CSS_SELECTOR, selector).text}")
@@ -882,13 +1015,16 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 logger.debug('{}: Cannot get handle to the input form for keyword {}.'.format(self.name, self.query))
                 continue
 
+            # check if request denied
+            self.handle_request_denied()
             super().detection_prevention_sleep()
             super().keyword_info()
 
             for self.page_number in self.pages_per_keyword:
 
+                # check if request denied
+                self.handle_request_denied()
                 self.wait_until_serp_loaded()
-
                 try:
                     self.html = self.webdriver.execute_script('return document.body.innerHTML;')
                 except WebDriverException as e:
