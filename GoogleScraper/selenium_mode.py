@@ -643,9 +643,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     # CHROME浏览器请到以下地址安装NopeCHA: CAPTCHA Solver验证码绕过插件
                     # https://chromewebstore.google.com/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo?hl=zh-CN&utm_source=ext_sidebar
                     # 也可以参考https://www.youtube.com/watch?v=BhDcsIpX5x8，安装capsolver模块
-                    if urlparse(self.webdriver.current_url).path:
-                        site_parser = urlparse(self.webdriver.current_url)
-                        self.webdriver.get(site_parser.scheme + "://" + site_parser.netloc)
+                    # if urlparse(self.webdriver.current_url).path:
+                    #     site_parser = urlparse(self.webdriver.current_url)
+                    #     self.webdriver.get(site_parser.scheme + "://" + site_parser.netloc)
                     try:
                         self.search_input = WebDriverWait(self.webdriver, 7).until(
                             EC.visibility_of_element_located(self._get_search_input_field()))
